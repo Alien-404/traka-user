@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  title: Traka pradita API
+  description: |-
+    Restfull api traka
+  contact:
+    email: rico@student.pradita.ac.id
+  version: 1.0.0
+servers:
+  - url: https://traka.rinaru.com
+    description: production server
+tags:
+  - name: Schedule
+    description: Traka schedule
+paths:
+  /schedule:
+    get:
+      tags:
+        - Schedule
+      summary: get schedules
+      description: mengambil semua data schedule setiap station
+      operationId: get-schedule-data
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          oneOf:
+                            - $ref: "#/components/schemas/Schedules"
+
+  /schedule/ongoing:
+    get:
+      tags:
+        - Schedule
+      summary: get ongoing schedule
+      description: mengambil data schedule yang sedang berlangsung
+      operationId: get-ongoing-schedule
+      parameters:
+        - in: query
+          name: total
+          schema:
+            type: integer
+            default: 10
+          description: Jumlah data yang ingin ditampilkan
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            period:
+                              type: string
+                              example: 06:00
+                            notes:
+                              type: string
+                              example: null
+                            station:
+                              type: object
+                              properties:
+                                location:
+                                  type: string
+                                  example: ALLOGGIO
+        "202":
+          description: Accepted | sistem traka(driver) sedang offline
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      message:
+                        example: traka is offline now!
+                      data:
+                        type: string
+                        example: null
+
+components:
+  schemas:
+    Wrapper:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+          example: success
+
+    Schedules:
+      type: array
+      items:
+        type: object
+        properties:
+          uuid:
+            type: string
+            example: 9601758f-12e4-4886-84c6-09c17b255633
+          location:
+            type: string
+            example: ALLOGGIO
+          latitude:
+            type: number
+            example: -6.2671
+          longitude:
+            type: number
+            example: 106.605
+          schedule:
+            type: array
+            items:
+              type: object
+              properties:
+                period:
+                  type: string
+                  example: 06:00
+                notes:
+                  type: string
+                  example: null

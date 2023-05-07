@@ -1,5 +1,8 @@
-const scheduleRoutes = require('./schedule.route');
+const router = require('express').Router();
+const { scheduleController } = require('../controllers');
 
-module.exports = {
-  scheduleRoutes,
-};
+// schedule
+router.get('/schedule', scheduleController.index);
+router.get('/schedule/ongoing', scheduleController.ongoing);
+
+module.exports = router;

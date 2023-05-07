@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Traka {
+  uuid        String  @unique @default(uuid())
+  name        String
+  information String
+  status      Boolean @default(true)
+}
+
+model Station {
+  uuid      String @unique @default(uuid())
+  location  Point  @unique
+  latitude  Float  @db.Float
+  longitude Float  @db.Float
+
+  // relation
+  schedule Schedule[]
+}
+
+model Schedule {
+  uuid       String   @unique @default(uuid())
+  period     String   @default("06:30")
+  notes      String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // relation
+  station_uuid String
+  station      Station @relation(fields: [station_uuid], references: [uuid])
+
+  @@index([station_uuid])
+}
+
+model Notification {
+  uuid       String   @unique @default(uuid())
+  topic      String
+  message    String
+  created_by String
+  created_at DateTime @default(now())
+}
+
+enum Point {
+  SDC_SQP_UMN
+  PRADITA
+  ALLOGGIO
+}
