@@ -1,20 +1,20 @@
 const errorHandler = (err, req, res, next) => {
-  // check error type
-  console.error(err);
-  console.log(err.statusCode);
-  if (err.status === 401) {
-    res.status(401).json({
-      message: 'You are not authorized to access this endpoint',
-    });
-  } else if (err.status === 404) {
-    res.status(404).json({
-      message: 'The page you are looking for was not found',
-    });
-  } else {
-    res.status(500).json({
-      message: 'An error occurred on the server',
-    });
-  }
+  // Takes the status code of the error, or assumes 500 if it doesn't exist
+  const statusCode = err.statusCode || 500;
+
+  // Retrieve error messages
+  const message = err.message || 'Internal Server Error';
+
+  // Gets stack trace errors if any
+  const stack = err.stack || '';
+
+  // Returns an error response to the client
+  res.status(statusCode).json({
+    error: {
+      status: false,
+      message: message,
+    },
+  });
 };
 
 module.exports = errorHandler;
