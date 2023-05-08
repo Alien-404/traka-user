@@ -103,4 +103,91 @@ module.exports = {
       next(error);
     }
   },
+
+  trakaRoute: async (req, res, next) => {
+    try {
+      // get req params
+      const { route } = req.params;
+      let routeFrom,
+        routeTo,
+        badRequest = false;
+
+      switch (route.toLowerCase()) {
+        case 'pradita':
+          routeFrom = 'PRADITA';
+          routeTo = 'SDC_SQP_UMN';
+          break;
+        case 'alloggio':
+          routeFrom = 'ALLOGGIO';
+          routeTo = 'PRADITA';
+          break;
+        case 'sdc_sqp_umn':
+          routeFrom = 'SDC_SQP_UMN';
+          routeTo = 'ALLOGGIO';
+          break;
+        default:
+          badRequest = true;
+          break;
+      }
+
+      // check if user give wrong params
+      if (badRequest) {
+        return res.status(400).json({
+          status: false,
+          message:
+            'Bad request | please give params pradita, alloggio or sdc_sqp_umn!',
+          data: null,
+        });
+      }
+
+      // setting cache
+      const cachedData = cache.get(req.url);
+
+      if (cachedData) {
+        return res.status(200).json({
+          status: true,
+          message: 'success',
+          data: cachedData,
+        });
+      }
+
+      // get all data
+      const stationSchedule = await prisma.station.findMany({
+        where: {
+          location: {
+            in: [routeFrom, routeTo],
+          },
+        },
+        orderBy: { location: 'desc' },
+        include: {
+          schedule: {
+            orderBy: { period: 'asc' },
+            select: {
+              period: true,
+              notes: true,
+            },
+          },
+        },
+      });
+
+      // check route
+      const [from, to] = stationSchedule
+        .filter((s) => s.location === routeFrom || s.location === routeTo)
+        .sort((a, b) => (a.location === routeFrom ? -1 : 1));
+
+      // set data to cache
+      cache.set(req.url, { from, to });
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: {
+          from,
+          to,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
