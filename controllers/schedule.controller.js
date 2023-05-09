@@ -70,7 +70,7 @@ module.exports = {
       if (!traka.status) {
         return res.status(202).json({
           status: true,
-          message: 'traka is offline now!',
+          message: 'Accepted | traka is offline now!',
           data: null,
         });
       }
@@ -177,6 +177,95 @@ module.exports = {
 
       // set data to cache
       cache.set(req.url, { from, to });
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: {
+          from,
+          to,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  current: async (req, res, next) => {
+    try {
+      const now = moment().tz('Asia/Jakarta');
+
+      // check traka is online
+      const traka = await prisma.traka.findFirst({
+        orderBy: {
+          name: 'asc',
+        },
+        select: {
+          status: true,
+        },
+      });
+
+      if (!traka.status) {
+        return res.status(202).json({
+          status: true,
+          message: 'Accepted | traka is offline now!',
+          data: null,
+        });
+      }
+
+      // get data
+      const from = await prisma.schedule.findFirst({
+        where: {
+          period: {
+            lt: now.format('HH:mm'),
+          },
+          notes: {
+            equals: null,
+          },
+        },
+        orderBy: { period: 'desc' },
+        select: {
+          period: true,
+          station: {
+            select: {
+              location: true,
+              latitude: true,
+              longitude: true,
+            },
+          },
+        },
+      });
+
+      const to = await prisma.schedule.findFirst({
+        where: {
+          period: {
+            gte: now.format('HH:mm'),
+          },
+          notes: {
+            equals: null,
+          },
+        },
+        orderBy: { period: 'asc' },
+        select: {
+          period: true,
+          station: {
+            select: {
+              location: true,
+              latitude: true,
+              longitude: true,
+            },
+          },
+        },
+      });
+
+      // check if the traka schedule is up or finished
+      if (to === null || from === null) {
+        return res.status(404).json({
+          status: false,
+          message: 'Not Found | Traka schedule is up or finished!',
+          data: null,
+        });
+      }
 
       return res.status(200).json({
         status: true,
