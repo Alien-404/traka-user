@@ -6,6 +6,7 @@ const { authHandler } = require('../middleware');
 // schedule
 router.get('/schedule', scheduleController.index);
 router.get('/schedule/ongoing', scheduleController.ongoing);
+router.get('/schedule/current', scheduleController.current);
 router.get('/schedule/:route', scheduleController.trakaRoute);
 
 // notifications

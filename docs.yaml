@@ -194,6 +194,95 @@ paths:
                         type: string
                         example: null
 
+  /schedule/current:
+    get:
+      tags:
+        - Schedule
+      summary: get current route schedule
+      description: mengambil data schedule sekarang yang sedang berlangsung (otomatis di cek oleh waktu server WIB)
+      operationId: get-schedule-current
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          from:
+                            type: object
+                            properties:
+                              period:
+                                type: string
+                                example: 13:30
+                              station:
+                                type: object
+                                properties:
+                                  location:
+                                    type: string
+                                    example: SDC_SQP_UMN
+                                  latitude:
+                                    type: number
+                                    example: -6.25724
+                                  longitude:
+                                    type: number
+                                    example: 106.617
+                          to:
+                            type: object
+                            properties:
+                              period:
+                                type: string
+                                example: 14:00
+                              station:
+                                type: object
+                                properties:
+                                  location:
+                                    type: string
+                                    example: ALLOGGIO
+                                  latitude:
+                                    type: number
+                                    example: -6.2671
+                                  longitude:
+                                    type: number
+                                    example: 106.605
+
+        "202":
+          description: Accepted | sistem traka(driver) sedang offline
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      message:
+                        example: traka is offline now!
+                      data:
+                        type: string
+                        example: null
+
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+                        example: null
+                      message:
+                        example: Not Found | Traka schedule is up or finished!
+                      status:
+                        example: false
+
   /notification:
     get:
       tags:

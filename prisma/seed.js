@@ -22,8 +22,8 @@ const stations = [
   },
   {
     location: 'PRADITA',
-    latitude: -6.257706163435968,
-    longitude: 106.61686618881144,
+    latitude: -6.259443241853584,
+    longitude: 106.61754281477016,
     schedule: {
       createMany: {
         data: generateSchedule('06:10', '20:40', 30, [
@@ -37,8 +37,8 @@ const stations = [
   },
   {
     location: 'SDC_SQP_UMN',
-    latitude: -6.267097741793193,
-    longitude: 106.60494626525117,
+    latitude: -6.257239671139333,
+    longitude: 106.6170322374791,
     schedule: {
       createMany: {
         data: generateSchedule('06:15', '20:45', 30, [
