@@ -12,6 +12,7 @@ router.get('/schedule/:route', scheduleController.trakaRoute);
 // notifications
 router.get('/notification', notifController.index);
 router.post('/notification', authHandler, notifController.create);
+// delete all notif
 router.delete('/notification/truncate', authHandler, notifController.truncate);
 router.delete('/notification/:uuid', authHandler, notifController.destroy);
 
