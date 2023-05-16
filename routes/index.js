@@ -12,6 +12,8 @@ router.get('/schedule/:route', scheduleController.trakaRoute);
 // notifications
 router.get('/notification', notifController.index);
 router.post('/notification', authHandler, notifController.create);
+router.delete('/notification/:uuid', authHandler, notifController.destroy);
+router.delete('/notification/truncate', authHandler, notifController.truncate);
 
 // traka
 router.get('/traka', trakaController.info);

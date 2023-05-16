@@ -391,6 +391,76 @@ paths:
                         type: boolean
                         default: false
 
+  /notification/{uuid}:
+    delete:
+      tags:
+        - Notification
+      summary: delete notification by uuid
+      description: menghapus notification by uuid
+      operationId: delete-notification-by-uuid
+      security:
+        - Authorization: []
+      parameters:
+        - in: path
+          name: uuid
+          description: delete by uuid
+          required: true
+          schema:
+            type: string
+            example: abc-123
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+                        example: null
+        "404":
+          description: not found!
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      message:
+                        example: not found!
+                      status:
+                        example: false
+                      data:
+                        type: string
+                        example: null
+
+  /notification/truncate:
+    delete:
+      tags:
+        - Notification
+      summary: delete all notification
+      description: menghapus semua notification
+      operationId: delete-all-notification
+      security:
+        - Authorization: []
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Wrapper"
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+                        example: null
+
   /traka:
     get:
       tags:
@@ -511,6 +581,9 @@ components:
           message:
             type: string
             example: Mohon maaf atas ketidaknyamanannya, masalahnya akan segera diperbaiki.
+          good:
+            type: boolean
+            example: false
           created_by:
             type: string
             example: driver-001

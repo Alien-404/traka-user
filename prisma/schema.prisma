@@ -46,6 +46,7 @@ model Notification {
   uuid       String   @unique @default(uuid())
   topic      String
   message    String
+  good       Boolean  @default(false)
   created_by String
   created_at DateTime @default(now())
 }

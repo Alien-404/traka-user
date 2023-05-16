@@ -28,7 +28,7 @@ module.exports = {
 
   create: async (req, res, next) => {
     try {
-      const { topic, message } = req.body;
+      const { topic, message, good } = req.body;
       const user = req.user;
 
       if (!topic || !message) {
@@ -38,6 +38,9 @@ module.exports = {
           data: null,
         });
       }
+
+      // check if not have good
+      good ? good : false;
 
       // check user valid
       const isUser = await prisma.traka.findFirst({
@@ -67,6 +70,55 @@ module.exports = {
         status: true,
         message: 'success',
         data: newNotif,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  destroy: async (req, res, next) => {
+    try {
+      const { uuid } = req.params;
+
+      const hasNotif = await prisma.notification.findFirst({
+        where: {
+          uuid,
+        },
+      });
+
+      // check if has not notification
+      if (!hasNotif) {
+        return res.status(404).json({
+          status: false,
+          message: 'not found!',
+          data: null,
+        });
+      }
+
+      const notification = await prisma.notification.delete({
+        where: {
+          uuid: uuid,
+        },
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  truncate: async (req, res, next) => {
+    try {
+      await prisma.notification.deleteMany({});
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: null,
       });
     } catch (error) {
       next(error);
